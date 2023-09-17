@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        body {
+            background: #000;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .container h2 {
+            position: relative;
+            color: #ffffff;
+            font-size: 2.5rem;
+            letter-spacing: 0.5rem;
+            text-shadow: 0.1rem 0.1rem 0.1rem #deee03;
+            transition: 0.5s;
+        }
+
+        .container h2::before {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #fff;
+            transition: .6s;
+            animation: createUnderline .9s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        @keyframes createUnderline {
+            0% {
+                width: 0%;
+            }
+
+            50% {
+                width: 100%;
+            }
+
+            100% {
+                width: 0%;
+            }
+        }
+
+
+        @keyframes animate {
+            0% {
+                box-shadow: 0.2rem 0.2rem 0.2rem #17ee03;
+            }
+
+            50% {
+                box-shadow: 0.2rem 0.2rem 0.2rem #e60303;
+            }
+
+            100% {
+                box-shadow: 0.2rem 0.2rem 0.2rem #3403e6;
+            }
+        }
+
+        .container input {
+            border: none;
+            outline: none;
+            background: #98959c17;
+            padding: 1rem;
+            width: 50rem;
+            color: #ffffff;
+            font-size: 1.1rem;
+            border-radius: 0.5rem;
+            transition: 0.5s ease;
+            animation: animate 0.7s infinite;
+        }
+
+        .container input::placeholder {
+            color: #b4b4b4;
+        }
+
+        .container button {
+            border: none;
+            outline: none;
+            background: #98959c17;
+            padding: 1rem;
+            width: 50rem;
+            color: #ffffff;
+            font-size: 1.1rem;
+            border-radius: 0.5rem;
+            transition: 0.5s ease;
+            animation: animate 0.7s infinite;
+            cursor: pointer;
+        }
+
+        .container .tasks-container .task {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            margin: 2rem 0;
+            border: none;
+            outline: none;
+            padding: 1rem;
+            width: 50rem;
+            color: #ffffff;
+            border-radius: 0.5rem;
+            transition: 0.5s ease;
+            animation: animate 0.7s infinite;
+        }
+
+        .container .tasks-container .task p {
+            color: #ffffff;
+            font-size: 1.2rem;
+        }
+
+        .container .tasks-container .task span {
+            color: #ffffff;
+            font-size: 1.2rem;
+            text-shadow: 0.1rem 0.1rem 0.1rem #000;
+            font-weight: 600;
+        }
+
+        .container .tasks-container .task .icons {
+            display: flex;
+            margin-left: auto;
+            gap: 2rem;
+        }
+
+        .container .tasks-container .task .icons i {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .container .tasks-container .task .icons i:nth-child(1):hover::after {
+            content: 'Edit';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -3.5rem;
+            right: -1.2rem;
+            width: 3rem;
+            height: 1rem;
+            background: #ffffff;
+            color: #000;
+            padding: 0.5rem;
+            border-radius: 0.3rem;
+        }
+
+        .container .tasks-container .task .icons i:nth-child(2):hover::after {
+            content: 'Delete';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -3.5rem;
+            right: -1.2rem;
+            width: 3rem;
+            height: 1rem;
+            background: #ffffff;
+            color: #000;
+            padding: 0.5rem;
+            border-radius: 0.3rem;
+        }
+
+        .active {
+            display: none;
+        }
+
+        .edit-input {
+            position: absolute;
+            transform: translateY(-50%);
+            padding: 0;
+            margin: 0 -1rem;
+            width: 100%;
+            height: 100%;
+            background: none !important;
+            box-shadow: none !important;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 1.2rem;
+            cursor: text;
+        }
+
+        .edit-input.hidden {
+            display: none;
+        }
+    </style>
+
+</head>
+
+<div class="container">
+
+    <h2>TODO LIST</h2>
+
+    <input type="text" class="add-task" placeholder="Write Here.">
+
+    <input type="text" class="search-task" placeholder="Search Here.">
+
+    <button type="submit" class="submit-btn">Add A Task</button>
+
+    <button type="submit" class="delete-btn">Delete A Task</button>
+
+    <div class="tasks-container"></div>
+
+</div>
+
+<script>
+
+    const addTask = document.querySelector('.add-task'),
+        searchTask = document.querySelector('.search-task'),
+        submitBtn = document.querySelector('.submit-btn'),
+        deleteBtn = document.querySelector('.delete-btn'),
+        tasksContainer = document.querySelector('.tasks-container');
+
+    submitBtn.addEventListener('click', () => {
+
+        if (addTask.value.trim() != 0) {
+
+            let localTasks = JSON.parse(localStorage.getItem('localTasks'));
+
+            if (localTasks === null) {
+                localTask = [];
+            } else {
+                localTask = localTasks;
+            };
+
+            localTask.push(addTask.value);
+
+            localStorage.setItem('localTasks', JSON.stringify(localTask));
+
+        };
+
+        showTasks();
+
+    });
+
+    function showTasks() {
+
+        let task = '';
+
+        let localTasks = JSON.parse(localStorage.getItem('localTasks'));
+
+        if (localTasks === null) {
+            localTask = [];
+        } else {
+            localTask = localTasks;
+        };
+
+        localTask.forEach((data, index) => {
+
+            task += `
+                    <div class="task">
+                        <span>${index + 1 + '.'}</span>
+                        <p class="added-task">${data}</p>
+                            <div class="icons">
+                                <i class="bi bi-pencil-square" onclick="updateTask(${index})"></i>
+                                <i class="bi bi-trash3" onclick="deleteTask(${index})"></i>
+                            </div>
+                    </div>
+            `;
+
+        });
+
+        tasksContainer.innerHTML = task;
+
+        addTask.value = '';
+
+    };
+
+    showTasks();
+
+    function deleteTask(index) {
+
+        let localTasks = JSON.parse(localStorage.getItem('localTasks'));
+
+        localTask.splice(index, 1);
+
+        localStorage.setItem('localTasks', JSON.stringify(localTask));
+
+        showTasks();
+
+    };
+
+    function updateTask(index) {
+
+        let task = document.querySelectorAll('.task')[index];
+
+        let addedTask = task.querySelector('.added-task');
+
+        let editInput = document.createElement('input');
+
+        editInput.type = 'text';
+
+        editInput.classList.add('edit-input');
+
+        editInput.value = addedTask.textContent;
+
+        addedTask.textContent = '';
+
+        addedTask.appendChild(editInput);
+
+        editInput.focus();
+
+        editInput.addEventListener('keydown', (e) => {
+
+            if (e.keyCode === 13) {
+
+                e.preventDefault();
+
+                const localTasks = JSON.parse(localStorage.getItem('localTasks'));
+                localTasks[index] = editInput.value;
+                localStorage.setItem('localTasks', JSON.stringify(localTasks));
+
+                addedTask.removeChild(editInput);
+                addedTask.textContent = editInput.value;
+
+            };
+
+        });
+
+    };
+
+    searchTask.addEventListener('input', () => {
+
+        let addedTasks = document.querySelectorAll('.task');
+
+        addedTasks.forEach(task => {
+
+            let taskText = task.querySelector('.added-task').textContent.toLowerCase();
+
+            if (taskText.includes(searchTask.value.toLowerCase())) {
+                task.style.display = 'flex';
+            } else {
+                task.style.display = 'none';
+            };
+
+        });
+
+    });
+
+</script>
+
+</body>
+
+</html>
